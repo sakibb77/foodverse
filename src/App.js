@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Route, Routes } from "react-router";
+import { Route, Routes, useNavigate } from "react-router";
 import Home from "./components/Home";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -15,6 +15,7 @@ function App() {
   const [stable, setStable] = useState(
     "Nothing to show, please search something!"
   );
+  const navigate = useNavigate();
   const inputField = useRef(null);
 
   const searchHandler = (e) => {
@@ -26,6 +27,7 @@ function App() {
     setSearchQuery("");
     inputField.current.blur();
     setRecipes([]);
+    navigate("/");
   };
 
   const getData = async (searchQuery) => {
@@ -35,11 +37,12 @@ function App() {
       setError("");
 
       const res = await fetch(
-        `https://forkify-api.herokuapp.com/api/search?q=${searchQuery}`
+        ` https://forkify-api.herokuapp.com/api/v2/recipes?search=${searchQuery}`
       );
-      if (!res.ok) throw new Error("Recipes Not Found");
+      if (!res.ok) throw new Error("something went wrong");
       const data = await res.json();
-      setRecipes(data.recipes);
+      if (data.results === 0) throw new Error("Recipes Not Found");
+      setRecipes(data?.data?.recipes);
       setLoading(false);
     } catch (err) {
       setError(err.message);
