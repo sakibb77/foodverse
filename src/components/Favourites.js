@@ -4,7 +4,7 @@ import Recipe from "./Recipe";
 const Favourites = ({ savedItems }) => {
   return (
     <div className="favourite">
-      {savedItems.length === 0 && (
+      {savedItems?.length === 0 && (
         <p className="text-center text-2xl text-rose-400 font-semibold lg:text-4xl capitalize">
           favourite list is empty
         </p>
