@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router";
 import Home from "./components/Home";
 import NavBar from "./components/NavBar";
@@ -15,6 +15,11 @@ function App() {
   const [stable, setStable] = useState(
     "Nothing to show, please search something!"
   );
+  const [savedItems, setSavedItems] = useState(() => {
+    const localData = localStorage.getItem("recipes");
+    return localData ? JSON.parse(localData) : [];
+  });
+
   const navigate = useNavigate();
   const inputField = useRef(null);
 
@@ -49,6 +54,31 @@ function App() {
     }
   };
 
+  const checkLocalData = (data) => {
+    const localData = JSON.parse(localStorage.getItem("recipes"));
+    const existData = localData?.some((item) => item.id === data.id);
+
+    if (!existData) {
+      setSavedItems([...savedItems, data]);
+    } else {
+      const filterData = localData?.filter((item) => item.id !== data.id);
+      setSavedItems(filterData);
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem("recipes", JSON.stringify(savedItems));
+  }, [savedItems]);
+
+  const favouriteHandler = (id) => {
+    fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`)
+      .then((res) => res.json())
+
+      .then((data) => checkLocalData(data.data.recipe));
+
+    navigate("/Favourites");
+  };
+
   return (
     <>
       <div className="App bg-rose-50 text-gray-600 min-h-screen px-9">
@@ -57,6 +87,7 @@ function App() {
           setSearchQuery={setSearchQuery}
           inputField={inputField}
           searchHandler={searchHandler}
+          savedItems={savedItems}
         />
         <Routes>
           <Route
@@ -70,8 +101,19 @@ function App() {
               />
             }
           />
-          <Route path="/favourites" element={<Favourites />} />
-          <Route path="/recipe-item/:id" element={<RecipeItem />} />
+          <Route
+            path="/favourites"
+            element={<Favourites savedItems={savedItems} />}
+          />
+          <Route
+            path="/recipe-item/:id"
+            element={
+              <RecipeItem
+                favouriteHandler={favouriteHandler}
+                savedItems={savedItems}
+              />
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

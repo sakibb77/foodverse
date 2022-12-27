@@ -1,6 +1,7 @@
-import Recipe from "./Recipe";
-import { CgSpinner } from "react-icons/cg";
 import React from "react";
+import { CgSpinner } from "react-icons/cg";
+import Recipe from "./Recipe";
+import FryingPan from "./FryingPan";
 
 const Home = ({ recipes, loading, error, stable }) => {
   // console.log(error);
@@ -10,6 +11,7 @@ const Home = ({ recipes, loading, error, stable }) => {
       {!loading && !error && recipes?.length === 0 ? (
         <p className="text-center text-2xl text-rose-400 font-semibold lg:text-4xl capitalize">
           {stable}
+          <FryingPan />
         </p>
       ) : (
         loading && (
