@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useParams } from "react-router";
 import { useFetch } from "../hook/useFetch";
 import { CgSpinner } from "react-icons/cg";
 import { MdPersonOutline } from "react-icons/md";
 import { CiClock2 } from "react-icons/ci";
-import { Link } from "react-router-dom";
+import { MdDone } from "react-icons/md";
 
 const RecipeItem = ({ favouriteHandler, savedItems }) => {
   const [itemSetStatus, setItemSetStatus] = useState(null);
@@ -90,7 +91,13 @@ const RecipeItem = ({ favouriteHandler, savedItems }) => {
                 <ul className="list-none flex flex-col gap-2">
                   {recipe?.ingredients?.map((ing, i) => {
                     return (
-                      <li key={i} className="text-lg font-medium text-gray-500">
+                      <li
+                        key={i}
+                        className="text-lg font-medium flex gap-1 items-center text-gray-500"
+                      >
+                        <span>
+                          <MdDone key={i} />
+                        </span>
                         {ing?.quantity} {ing?.unit}
                         {ing?.description}
                       </li>
